@@ -95,8 +95,10 @@ get '/' => [qw/set_name/] => sub {
         LIMIT $PER_PAGE
         OFFSET @{[ $PER_PAGE * ($page-1) ]}
     ]);
+
+    my $re = $self->get_keyword_re();
     foreach my $entry (@$entries) {
-        $entry->{html}  = $self->htmlify($c, $entry->{description});
+        $entry->{html}  = $self->htmlify_with_re($c, $entry->{description}, $re);
         $entry->{stars} = $self->load_stars($entry->{keyword});
     }
 
@@ -206,7 +208,7 @@ get '/keyword/:keyword' => [qw/set_name/] => sub {
         WHERE keyword = ?
     ], $keyword);
     $c->halt(404) unless $entry;
-    $entry->{html} = $self->htmlify($c, $entry->{description});
+    $entry->{html} = $self->htmlify_with_re($c, $entry->{description}, $self->get_keyword_re());
     $entry->{stars} = $self->load_stars($entry->{keyword});
 
     $c->render('keyword.tx', { entry => $entry });
@@ -229,15 +231,20 @@ post '/keyword/:keyword' => [qw/set_name authenticate/] => sub {
     $c->redirect('/');
 };
 
-sub htmlify {
-    my ($self, $c, $content) = @_;
-    return '' unless defined $content;
+sub get_keyword_re {
+    my ($self) = @_;
+
     my $keywords = $self->dbh->select_all(qq[
         SELECT keyword FROM entry FORCE INDEX (idx_keyword_length) ORDER BY keyword_length DESC
-
     ]);
-    my %kw2sha;
     my $re = join '|', map { quotemeta $_->{keyword} } @$keywords;
+    return $re;
+}
+
+sub htmlify_with_re {
+    my ($self, $c, $content, $re) = @_;
+    return '' unless defined $content;
+    my %kw2sha;
     $content =~ s{($re)}{
         my $kw = $1;
         $kw2sha{$kw} = "isuda_" . sha1_hex(encode_utf8($kw));
