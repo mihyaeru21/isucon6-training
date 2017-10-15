@@ -14,6 +14,7 @@ use URI::Escape qw/uri_escape_utf8/;
 use Text::Xslate::Util qw/html_escape/;
 use List::Util qw/min max/;
 use Redis::Jet;
+use DDP;
 
 sub config {
     state $conf = {
@@ -50,22 +51,6 @@ sub dbh {
     });
 }
 
-sub dbh_isutar {
-    my ($self) = @_;
-    return $self->{dbh_isutar} //= DBIx::Sunny->connect(
-        $ENV{ISUTAR_DSN} // 'dbi:mysql:db=isutar', $ENV{ISUTAR_DB_USER} // 'root', $ENV{ISUTAR_DB_PASSWORD} // '', {
-            Callbacks => {
-                connected => sub {
-                    my $dbh = shift;
-                    $dbh->do(q[SET SESSION sql_mode='TRADITIONAL,NO_AUTO_VALUE_ON_ZERO,ONLY_FULL_GROUP_BY']);
-                    $dbh->do('SET NAMES utf8mb4');
-                    return;
-                },
-            },
-        },
-    );
-}
-
 filter 'set_name' => sub {
     my $app = shift;
     sub {
@@ -99,9 +84,6 @@ get '/initialize' => sub {
     $self->dbh->query(q[
         DELETE FROM entry WHERE id > 7101
     ]);
-
-    # isutar
-    $self->dbh_isutar->query('TRUNCATE star');
 
     # redis
     $self->redis->command('flushall');
@@ -273,10 +255,7 @@ post '/stars' => sub {
     my $entry = $self->dbh->select_row(qq[SELECT 1 FROM entry WHERE keyword = ?], $keyword);
     $c->halt(404) unless $entry;
 
-    $self->dbh_isutar->query(q[
-        INSERT INTO star (keyword, user_name, created_at)
-        VALUES (?, ?, NOW())
-    ], $keyword, $user);
+    $self->redis->command('lpush', encode_utf8($keyword), encode_utf8($user));
 
     $c->render_json({
         result => 'ok',
@@ -311,9 +290,8 @@ sub htmlify_with_re {
 sub load_stars {
     my ($self, $keyword) = @_;
 
-    my $stars = $self->dbh_isutar->select_all(q[
-        SELECT * FROM star WHERE keyword = ?
-    ], $keyword);
+    my $names = $self->redis->command('lrange', encode_utf8($keyword), 0, -1) // [];
+    my $stars = [ map { { user_name => $_ } } @$names ];
 
     return $stars;
 }

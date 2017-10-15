@@ -12,4 +12,5 @@ requires 'String::Random';
 requires 'URI::Escape';
 requires 'Plack::Middleware::Profiler::NYTProf';
 requires 'Redis::Jet';
+requires 'Data::Printer';
 
