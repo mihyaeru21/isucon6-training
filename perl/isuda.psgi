@@ -11,7 +11,15 @@ use Isuda::Web;
 
 my $root_dir = $FindBin::Bin;
 my $app = Isuda::Web->psgi($root_dir);
+#my $dir = sprintf('/tmp/profile-%s', time);
+#mkdir $dir;
 builder {
+#  enable "Profiler::NYTProf",
+#    env_nytprof          => 'start=no:addpid=0:slowops=0',
+#    profiling_result_dir => sub { $dir },
+#    enable_reporting     => 0,
+#    enable_profile       => sub { $$ % 2 == 0 }
+#    ;
     enable 'ReverseProxy';
     enable 'Static',
         path => qr!^/(?:(?:css|js|img)/|favicon\.ico$)!,

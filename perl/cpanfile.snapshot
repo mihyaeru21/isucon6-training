@@ -1,5 +1,12 @@
 # carton snapshot format: version 1.0
 DISTRIBUTIONS
+  Algorithm-Diff-1.1903
+    pathname: T/TY/TYEMQ/Algorithm-Diff-1.1903.tar.gz
+    provides:
+      Algorithm::Diff 1.1903
+      Algorithm::Diff::_impl 1.1903
+    requirements:
+      ExtUtils::MakeMaker 0
   Apache-LogFormat-Compiler-0.33
     pathname: K/KA/KAZEBURO/Apache-LogFormat-Compiler-0.33.tar.gz
     provides:
@@ -16,6 +23,21 @@ DISTRIBUTIONS
       Canary::Stability 2011
     requirements:
       ExtUtils::MakeMaker 0
+  Capture-Tiny-0.46
+    pathname: D/DA/DAGOLDEN/Capture-Tiny-0.46.tar.gz
+    provides:
+      Capture::Tiny 0.46
+    requirements:
+      Carp 0
+      Exporter 0
+      ExtUtils::MakeMaker 6.17
+      File::Spec 0
+      File::Temp 0
+      IO::Handle 0
+      Scalar::Util 0
+      perl 5.006
+      strict 0
+      warnings 0
   Class-Accessor-Lite-0.08
     pathname: K/KA/KAZUHO/Class-Accessor-Lite-0.08.tar.gz
     provides:
@@ -246,6 +268,43 @@ DISTRIBUTIONS
       Test::Requires 0
       parent 0
       perl 5.008001
+  Devel-KYTProf-0.05
+    pathname: O/ON/ONISHI/Devel-KYTProf-0.05.tar.gz
+    provides:
+      Devel::KYTProf 0.05
+      Devel::KYTProf::Logger::LTSV undef
+    requirements:
+      Class::Data::Inheritable 0
+      ExtUtils::MakeMaker 6.36
+      Term::ANSIColor 0
+      Test::More 0.94
+      Time::HiRes 0
+      UNIVERSAL::require 0
+  Devel-NYTProf-6.04
+    pathname: T/TI/TIMB/Devel-NYTProf-6.04.tar.gz
+    provides:
+      Devel::NYTProf 6.04
+      Devel::NYTProf::Apache 4.00
+      Devel::NYTProf::Constants undef
+      Devel::NYTProf::Core 6.04
+      Devel::NYTProf::Data 4.02
+      Devel::NYTProf::FileHandle undef
+      Devel::NYTProf::FileInfo undef
+      Devel::NYTProf::ReadStream 4.00
+      Devel::NYTProf::Reader 4.06
+      Devel::NYTProf::Run undef
+      Devel::NYTProf::SubCallInfo undef
+      Devel::NYTProf::SubInfo undef
+      Devel::NYTProf::Util 4.00
+    requirements:
+      ExtUtils::MakeMaker 0
+      File::Which 1.09
+      Getopt::Long 0
+      JSON::MaybeXS 0
+      List::Util 0
+      Test::Differences 0.60
+      Test::More 0.84
+      XSLoader 0
   Devel-StackTrace-2.01
     pathname: D/DR/DROLSKY/Devel-StackTrace-2.01.tar.gz
     provides:
@@ -362,6 +421,21 @@ DISTRIBUTIONS
       ExtUtils::MakeMaker 0
       HTTP::Date 6
       perl 5.006002
+  File-Remove-1.57
+    pathname: S/SH/SHLOMIF/File-Remove-1.57.tar.gz
+    provides:
+      File::Remove 1.57
+    requirements:
+      Cwd 3.29
+      ExtUtils::MakeMaker 0
+      File::Glob 0
+      File::Path 0
+      File::Spec 3.29
+      constant 0
+      perl 5.006
+      strict 0
+      vars 0
+      warnings 0
   File-ShareDir-1.102
     pathname: R/RE/REHSACK/File-ShareDir-1.102.tar.gz
     provides:
@@ -387,6 +461,13 @@ DISTRIBUTIONS
       perl 5.008
       strict 0
       warnings 0
+  File-Which-1.22
+    pathname: P/PL/PLICEASE/File-Which-1.22.tar.gz
+    provides:
+      File::Which 1.22
+    requirements:
+      ExtUtils::MakeMaker 0
+      perl 5.006
   Filesys-Notify-Simple-0.12
     pathname: M/MI/MIYAGAWA/Filesys-Notify-Simple-0.12.tar.gz
     provides:
@@ -612,6 +693,19 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       Test::More 0
+  JSON-MaybeXS-1.003009
+    pathname: E/ET/ETHER/JSON-MaybeXS-1.003009.tar.gz
+    provides:
+      JSON::MaybeXS 1.003009
+    requirements:
+      Carp 0
+      ExtUtils::CBuilder 0.27
+      ExtUtils::MakeMaker 0
+      File::Spec 0
+      File::Temp 0
+      JSON::PP 2.27300
+      Scalar::Util 0
+      perl 5.006
   JSON-XS-3.02
     pathname: M/ML/MLEHMANN/JSON-XS-3.02.tar.gz
     provides:
@@ -785,6 +879,82 @@ DISTRIBUTIONS
       XSLoader 0
       parent 0
       perl 5.008005
+  Module-Install-1.18
+    pathname: E/ET/ETHER/Module-Install-1.18.tar.gz
+    provides:
+      Module::AutoInstall 1.18
+      Module::Install 1.18
+      Module::Install::Admin 1.18
+      Module::Install::Admin::Bundle 1.18
+      Module::Install::Admin::Compiler 1.18
+      Module::Install::Admin::Find 1.18
+      Module::Install::Admin::Include 1.18
+      Module::Install::Admin::Makefile 1.18
+      Module::Install::Admin::Manifest 1.18
+      Module::Install::Admin::Metadata 1.18
+      Module::Install::Admin::ScanDeps 1.18
+      Module::Install::Admin::WriteAll 1.18
+      Module::Install::AutoInstall 1.18
+      Module::Install::Base 1.18
+      Module::Install::Base::FakeAdmin 1.18
+      Module::Install::Bundle 1.18
+      Module::Install::Can 1.18
+      Module::Install::Compiler 1.18
+      Module::Install::DSL 1.18
+      Module::Install::Deprecated 1.18
+      Module::Install::External 1.18
+      Module::Install::Fetch 1.18
+      Module::Install::Include 1.18
+      Module::Install::Inline 1.18
+      Module::Install::MakeMaker 1.18
+      Module::Install::Makefile 1.18
+      Module::Install::Metadata 1.18
+      Module::Install::PAR 1.18
+      Module::Install::Run 1.18
+      Module::Install::Scripts 1.18
+      Module::Install::Share 1.18
+      Module::Install::Win32 1.18
+      Module::Install::With 1.18
+      Module::Install::WriteAll 1.18
+      inc::Module::Install 1.18
+      inc::Module::Install::DSL 1.18
+    requirements:
+      Devel::PPPort 3.16
+      ExtUtils::Install 1.52
+      ExtUtils::MakeMaker 6.59
+      ExtUtils::ParseXS 2.19
+      File::Path 0
+      File::Remove 1.42
+      File::Spec 3.28
+      Module::Build 0.29
+      Module::CoreList 2.17
+      Module::ScanDeps 1.09
+      Parse::CPAN::Meta 1.4413
+      Test::Harness 3.13
+      Test::More 0.86
+      YAML::Tiny 1.38
+      autodie 0
+      perl 5.006
+  Module-Install-AuthorTests-0.002
+    pathname: R/RJ/RJBS/Module-Install-AuthorTests-0.002.tar.gz
+    provides:
+      Module::Install::AuthorTests 0.002
+    requirements:
+      ExtUtils::MakeMaker 0
+      Module::Install 0
+  Module-ScanDeps-1.24
+    pathname: R/RS/RSCHUPP/Module-ScanDeps-1.24.tar.gz
+    provides:
+      Module::ScanDeps 1.24
+    requirements:
+      ExtUtils::MakeMaker 0
+      File::Spec 0
+      File::Temp 0
+      Getopt::Long 0
+      Module::Metadata 0
+      Text::ParseWords 0
+      perl 5.008001
+      version 0
   Mouse-v2.4.5
     pathname: S/SY/SYOHEX/Mouse-v2.4.5.tar.gz
     provides:
@@ -981,6 +1151,23 @@ DISTRIBUTIONS
       URI 1.59
       parent 0
       perl 5.008001
+  Plack-Middleware-Profiler-NYTProf-0.17
+    pathname: K/KI/KITANO/Plack-Middleware-Profiler-NYTProf-0.17.tar.gz
+    provides:
+      Plack::Middleware::Profiler::NYTProf 0.17
+    requirements:
+      Devel::NYTProf 5.06
+      Exporter 0
+      ExtUtils::MakeMaker 6.36
+      File::Spec 0
+      File::Temp 0
+      File::Which 0
+      Filter::Util::Call 0
+      Module::Install::AuthorTests 0
+      Plack 0
+      Test::More 0.98
+      Time::HiRes 0
+      parent 0
   Plack-Middleware-ReverseProxy-0.15
     pathname: M/MI/MIYAGAWA/Plack-Middleware-ReverseProxy-0.15.tar.gz
     provides:
@@ -1155,6 +1342,15 @@ DISTRIBUTIONS
       List::Util 1.09
       Scalar::Util 1.09
       Test::Builder 0
+  Test-Differences-0.64
+    pathname: D/DC/DCANTRELL/Test-Differences-0.64.tar.gz
+    provides:
+      Test::Differences 0.64
+    requirements:
+      Capture::Tiny 0.24
+      Data::Dumper 2.126
+      Test::More 0.88
+      Text::Diff 0.35
   Test-Requires-0.10
     pathname: T/TO/TOKUHIROM/Test-Requires-0.10.tar.gz
     provides:
@@ -1192,6 +1388,18 @@ DISTRIBUTIONS
       Test::SharedFork 0.29
       Time::HiRes 0
       perl 5.008001
+  Text-Diff-1.45
+    pathname: N/NE/NEILB/Text-Diff-1.45.tar.gz
+    provides:
+      Text::Diff 1.45
+      Text::Diff::Base 1.45
+      Text::Diff::Config 1.44
+      Text::Diff::Table 1.44
+    requirements:
+      Algorithm::Diff 1.19
+      Exporter 0
+      ExtUtils::MakeMaker 0
+      perl 5.006
   Text-Xslate-3.3.9
     pathname: S/SY/SYOHEX/Text-Xslate-3.3.9.tar.gz
     provides:
@@ -1262,6 +1470,17 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       common::sense 0
+  UNIVERSAL-require-0.18
+    pathname: N/NE/NEILB/UNIVERSAL-require-0.18.tar.gz
+    provides:
+      UNIVERSAL::require 0.18
+    requirements:
+      Carp 0
+      ExtUtils::MakeMaker 0
+      Test::More 0.47
+      perl 5.006
+      strict 0
+      warnings 0
   URI-1.71
     pathname: E/ET/ETHER/URI-1.71.tar.gz
     provides:
@@ -1362,6 +1581,20 @@ DISTRIBUTIONS
     requirements:
       ExtUtils::MakeMaker 0
       Test::More 0.47
+  YAML-Tiny-1.70
+    pathname: E/ET/ETHER/YAML-Tiny-1.70.tar.gz
+    provides:
+      YAML::Tiny 1.70
+    requirements:
+      B 0
+      Carp 0
+      Exporter 0
+      ExtUtils::MakeMaker 0
+      Fcntl 0
+      Scalar::Util 0
+      perl 5.008001
+      strict 0
+      warnings 0
   common-sense-3.74
     pathname: M/ML/MLEHMANN/common-sense-3.74.tar.gz
     provides:
