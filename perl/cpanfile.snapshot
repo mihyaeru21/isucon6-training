@@ -1206,6 +1206,14 @@ DISTRIBUTIONS
       Proc::Wait3 0.05
     requirements:
       ExtUtils::MakeMaker 0
+  Redis-Jet-0.08
+    pathname: K/KA/KAZEBURO/Redis-Jet-0.08.tar.gz
+    provides:
+      Redis::Jet 0.08
+    requirements:
+      ExtUtils::CBuilder 0
+      Module::Build 0.4005
+      perl 5.008005
   Router-Boom-1.03
     pathname: T/TO/TOKUHIROM/Router-Boom-1.03.tar.gz
     provides:

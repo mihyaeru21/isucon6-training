@@ -4,7 +4,7 @@ use warnings;
 use utf8;
 use Kossy;
 use DBIx::Sunny;
-use Encode qw/encode_utf8/;
+use Encode qw/encode_utf8 decode_utf8/;
 use POSIX qw/ceil/;
 use Furl;
 use JSON::XS qw/decode_json/;
@@ -13,6 +13,7 @@ use Digest::SHA1 qw/sha1_hex/;
 use URI::Escape qw/uri_escape_utf8/;
 use Text::Xslate::Util qw/html_escape/;
 use List::Util qw/min max/;
+use Redis::Jet;
 
 sub config {
     state $conf = {
@@ -30,6 +31,11 @@ sub config {
     return $v;
 }
 
+sub redis {
+    my ($self) = @_;
+    return $self->{redis} //= Redis::Jet->new(server => 'localhost:6379');
+}
+
 sub dbh {
     my ($self) = @_;
     return $self->{dbh} //= DBIx::Sunny->connect(config('dsn'), config('db_user'), config('db_password'), {
@@ -42,6 +48,22 @@ sub dbh {
             },
         },
     });
+}
+
+sub dbh_isutar {
+    my ($self) = @_;
+    return $self->{dbh_isutar} //= DBIx::Sunny->connect(
+        $ENV{ISUTAR_DSN} // 'dbi:mysql:db=isutar', $ENV{ISUTAR_DB_USER} // 'root', $ENV{ISUTAR_DB_PASSWORD} // '', {
+            Callbacks => {
+                connected => sub {
+                    my $dbh = shift;
+                    $dbh->do(q[SET SESSION sql_mode='TRADITIONAL,NO_AUTO_VALUE_ON_ZERO,ONLY_FULL_GROUP_BY']);
+                    $dbh->do('SET NAMES utf8mb4');
+                    return;
+                },
+            },
+        },
+    );
 }
 
 filter 'set_name' => sub {
@@ -72,12 +94,21 @@ filter 'authenticate' => sub {
 
 get '/initialize' => sub {
     my ($self, $c)  = @_;
+
+    # isuda
     $self->dbh->query(q[
         DELETE FROM entry WHERE id > 7101
     ]);
-    my $origin = config('isutar_origin');
-    my $url = URI->new("$origin/initialize");
-    Furl->new->get($url);
+
+    # isutar
+    $self->dbh_isutar->query('TRUNCATE star');
+
+    # redis
+    $self->redis->command('flushall');
+
+    # create cache
+    $self->update_keywords();
+
     $c->render_json({
         result => 'ok',
     });
@@ -134,6 +165,8 @@ post '/keyword' => [qw/set_name authenticate/] => sub {
         ON DUPLICATE KEY UPDATE
         author_id = ?, keyword = ?, description = ?, updated_at = NOW()
     ], ($user_id, $keyword, $description, $keyword) x 2);
+
+    $self->update_keywords();
 
     $c->redirect('/');
 };
@@ -231,13 +264,30 @@ post '/keyword/:keyword' => [qw/set_name authenticate/] => sub {
     $c->redirect('/');
 };
 
+post '/stars' => sub {
+    my ($self, $c) = @_;
+    my $keyword = $c->req->parameters->{keyword};
+    my $user    = $c->req->parameters->{user};
+
+    # keyword check
+    my $entry = $self->dbh->select_row(qq[SELECT 1 FROM entry WHERE keyword = ?], $keyword);
+    $c->halt(404) unless $entry;
+
+    $self->dbh_isutar->query(q[
+        INSERT INTO star (keyword, user_name, created_at)
+        VALUES (?, ?, NOW())
+    ], $keyword, $user);
+
+    $c->render_json({
+        result => 'ok',
+    });
+};
+
 sub get_keyword_re {
     my ($self) = @_;
 
-    my $keywords = $self->dbh->select_all(qq[
-        SELECT keyword FROM entry FORCE INDEX (idx_keyword_length) ORDER BY keyword_length DESC
-    ]);
-    my $re = join '|', map { quotemeta $_->{keyword} } @$keywords;
+    my $keywords = $self->keywords;
+    my $re = join '|', map { quotemeta $_ } @$keywords;
     return $re;
 }
 
@@ -260,14 +310,12 @@ sub htmlify_with_re {
 
 sub load_stars {
     my ($self, $keyword) = @_;
-    my $origin = config('isutar_origin');
-    my $url = URI->new("$origin/stars");
-    $url->query_form(keyword => $keyword);
-    my $ua = Furl->new;
-    my $res = $ua->get($url);
-    my $data = decode_json $res->content;
 
-    $data->{stars};
+    my $stars = $self->dbh_isutar->select_all(q[
+        SELECT * FROM star WHERE keyword = ?
+    ], $keyword);
+
+    return $stars;
 }
 
 sub is_spam_contents {
@@ -279,5 +327,23 @@ sub is_spam_contents {
     my $data = decode_json $res->content;
     !$data->{valid};
 }
+
+
+
+sub update_keywords {
+    my ($self) = @_;
+
+    my $keywords = $self->dbh->select_all('SELECT keyword FROM entry ORDER BY keyword_length DESC') // [];
+    my @keywords = map { $_->{keyword} } @$keywords;
+    my $kw       = join "\t", @keywords;
+    $self->redis->command(qw/set kw/, encode_utf8($kw));
+}
+
+sub keywords {
+    my ($self) = @_;
+    my $kw = $self->redis->command(qw/get kw/);
+    return [split /\t/, decode_utf8($kw)];
+}
+
 
 1;

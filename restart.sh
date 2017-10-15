@@ -9,5 +9,5 @@ sudo nginx -t
 sudo rm /var/log/mysql/mysql-slow.log
 sudo rm /var/log/nginx/access.log
 
-sudo systemctl daemon-reload && sudo systemctl restart nginx.service mysql.service isutar.perl.service isuda.perl.service
+sudo systemctl daemon-reload && sudo systemctl restart nginx.service mysql.service isuda.perl.service
 
