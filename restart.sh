@@ -3,6 +3,7 @@
 sudo cp my.cnf /etc/mysql/my.cnf
 sudo cp mysqld.cnf /etc/mysql/mysql.conf.d/mysqld.cnf
 sudo cp nginx.conf /etc/nginx/nginx.conf
+sudo cp isuda.perl.service /etc/systemd/system/isuda.perl.service
 sudo nginx -t
 
 sudo rm /var/log/mysql/mysql-slow.log
