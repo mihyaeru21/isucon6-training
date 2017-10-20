@@ -21,7 +21,6 @@ sub config {
         dsn           => $ENV{ISUDA_DSN}         // 'dbi:mysql:db=isuda',
         db_user       => $ENV{ISUDA_DB_USER}     // 'root',
         db_password   => $ENV{ISUDA_DB_PASSWORD} // '',
-        isutar_origin => $ENV{ISUTAR_ORIGIN}     // 'http://localhost:5001',
         isupam_origin => $ENV{ISUPAM_ORIGIN}     // 'http://localhost:5050',
     };
     my $key = shift;
