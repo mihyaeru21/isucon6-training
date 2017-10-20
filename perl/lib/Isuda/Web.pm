@@ -57,10 +57,7 @@ filter 'set_name' => sub {
         my $user_id = $c->env->{'psgix.session'}->{user_id};
         if ($user_id) {
             $c->stash->{user_id} = $user_id;
-            $c->stash->{user_name} = $self->dbh->select_one(q[
-                SELECT name FROM user
-                WHERE id = ?
-            ], $user_id);
+            $c->stash->{user_name} = $self->get_user_name($user_id);
             $c->halt(403) unless defined $c->stash->{user_name};
         }
         $app->($self,$c);
@@ -89,6 +86,12 @@ get '/initialize' => sub {
 
     # create cache
     $self->update_keywords();
+    # user_id => name cache
+    my $users = $self->dbh->select_all(qq[ SELECT id, name FROM user ]);
+    for my $user (@$users) {
+        $self->set_user_name($user->{id}, $user->{name});
+        p $self->get_user_name($user->{id});
+    }
 
     $c->render_json({
         result => 'ok',
@@ -166,22 +169,25 @@ post '/register' => sub {
     my $pw   = $c->req->parameters->{password};
     $c->halt(400) if $name eq '' || $pw eq '';
 
-    my $user_id = register($self->dbh, $name, $pw);
+    my $user_id = $self->register($self->dbh, $name, $pw);
 
     $c->env->{'psgix.session'}->{user_id} = $user_id;
     $c->redirect('/');
 };
 
 sub register {
-    my ($dbh, $user, $pass) = @_;
+    my ($self, $dbh, $name, $pass) = @_;
 
     my $salt = random_string('....................');
     $dbh->query(q[
         INSERT INTO user (name, salt, password, created_at)
         VALUES (?, ?, ?, NOW())
-    ], $user, $salt, sha1_hex($salt . $pass));
+    ], $name, $salt, sha1_hex($salt . $pass));
 
-    return $dbh->last_insert_id;
+    my $id = $dbh->last_insert_id;
+    $self->set_user_name($id, $name);
+
+    return $id;
 }
 
 get '/login' => [qw/set_name/] => sub {
@@ -320,6 +326,19 @@ sub keywords {
     my ($self) = @_;
     my $kw = $self->redis->command(qw/get kw/);
     return [split /\t/, decode_utf8($kw)];
+}
+
+
+sub set_user_name {
+  my ($self, $id, $name) = @_;
+  my $key = 'u:' . $id;
+  $self->redis->command('set', $key, encode_utf8($name));
+}
+
+sub get_user_name {
+  my ($self, $id) = @_;
+  my $key = 'u:' . $id;
+  return decode_utf8 $self->redis->command('get', $key);
 }
 
 
